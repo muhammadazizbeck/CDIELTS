@@ -1,6 +1,6 @@
-from django.urls import path
-from writing.views import SubmitWritingTask
+from django.urls import path,include
+from writing.views import WritingTaskAPIView
 
 urlpatterns = [
-    path('check-essay/',SubmitWritingTask.as_view(),name="check-essay")
+    path("writing-tasks/",WritingTaskAPIView.as_view(),name='writing-tasks')
 ]

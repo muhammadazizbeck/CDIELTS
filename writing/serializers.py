@@ -1,12 +1,10 @@
 from rest_framework import serializers
-from writing.models import WritingCheck
+from writing.models import WritingTask,WritingSubmission,WritingEvaluation
 
 class WritingTaskSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WritingCheck
+        model = WritingTask
         fields = "__all__"
-        read_only_fields = (
-            'user','title',"image",'score',"coherence",
-            'grammer','vocabulary','response','feedback',
-            "created_at",'updated_at',
-            )
+        read_only_fields = ("task_type","image","title","question")
+
+    
