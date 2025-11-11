@@ -20,20 +20,17 @@ class WritingTask(models.Model):
 
     def __str__(self):
         return f"Writing-{self.title[:30]}"
+    
+def one_hour_later():
+    return timezone.now() + timedelta(hours=1)
 
 class WritingSubmission(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='submissions')
     task = models.ForeignKey(WritingTask,on_delete=models.CASCADE,related_name='submissions')
     answer = models.TextField()
     start_time = models.DateTimeField(auto_now_add=True)
-    end_time = models.DateTimeField(blank=True,null=True)
+    end_time = models.DateTimeField(default=one_hour_later)
     submitted_at = models.DateTimeField(blank=True,null=True)
-
-    def save(self,*args,**kwargs):
-        if not self.end_time:
-            self.end_time = self.start_time + timedelta(hours=1)
-
-        super().save(*args,**kwargs)
 
     def is_time_over(self):
         return timezone.now()>self.end_time
