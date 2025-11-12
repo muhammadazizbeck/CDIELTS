@@ -55,8 +55,8 @@ GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET')
 GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI')
 
-GROK_API_URL = config('GROK_API_URL')
-GROK_API_KEY = config('GROK_API_KEY')
+OPENAI_API_URL = config('OPENAI_API_URL')
+OPENAI_API_KEY = config('OPENAI_API_KEY')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

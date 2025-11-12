@@ -1,59 +1,50 @@
-# backend/writing/views.py  (TOʻLIQ yangi views.py)
-from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 from .models import WritingTask, WritingSubmission, WritingEvaluation
-from .serializers import WritingTaskSerializer, WritingSubmissionSerializer
-from .grok_evaluate import evaluate_with_grok
-from django.utils import timezone
+from .serializers import WritingSubmissionSerializer, WritingTaskSerializer
+from .openai import evaluate_with_openai
 
-class WritingTaskViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = WritingTask.objects.all().order_by('-created_at')
-    serializer_class = WritingTaskSerializer
-    permission_classes = [AllowAny]
-
-class WritingSubmissionViewSet(viewsets.ModelViewSet):
-    queryset = WritingSubmission.objects.all()
-    serializer_class = WritingSubmissionSerializer
+class SubmitAndEvaluateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def post(self, request):
+        task_id = request.data.get('task_id')
+        answer = request.data.get('answer', '').strip()
 
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        if not task_id:
+            return Response({"error": "task_id majburiy!"}, status=400)
+        if len(answer) < 50:
+            return Response({"error": "Essay juda qisqa!"}, status=400)
 
-    @action(detail=True, methods=['post'])
-    def evaluate(self, request, pk=None):
-        """GROK bilan baholash – ENG MUHIMI!"""
-        submission = self.get_object()
-        
-        if hasattr(submission, 'eval'):
-            # Agar allaqachon baholangan boʻlsa
-            serializer = self.get_serializer(submission)
-            return Response(serializer.data)
+        task = get_object_or_404(WritingTask, id=task_id)
 
-        # GROK chaqirish
-        try:
-            eval_data = evaluate_with_grok(submission)
-            evaluation = WritingEvaluation.objects.create(
-                submission=submission,
-                **eval_data
-            )
-            serializer = self.get_serializer(submission)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({
-                "error": f"Grok xato: {str(e)}",
-                "debug": "API key tekshiring"
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        submission = WritingSubmission.objects.create(
+            user=request.user,
+            task=task,
+            answer=answer
+        )
 
-    @action(detail=True, methods=['post'])
-    def submit_final(self, request, pk=None):
-        submission = self.get_object()
-        submission.submitted_at = timezone.now()
-        submission.save()
-        return Response({"message": "Submitted! Call /evaluate/ to score."})
+        # OpenAI bilan baholash
+        eval_data = evaluate_with_openai(submission)
+        WritingEvaluation.objects.create(submission=submission, **eval_data)
+
+        serializer = WritingSubmissionSerializer(submission)
+        return Response({
+            "success": True,
+            "message": "Essay yuborildi va OpenAI baholadi!",
+            "submission_id": submission.id,
+            "band_score": eval_data['score'],
+            "data": serializer.data
+        }, status=201)
+
+class WritingTaskAPIView(APIView):
+    def get(self,request):
+        writing_tasks = WritingTask.objects.all()
+        serializer = WritingTaskSerializer(writing_tasks,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
     
+
 

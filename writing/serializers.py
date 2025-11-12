@@ -1,36 +1,23 @@
 # backend/writing/serializers.py
 from rest_framework import serializers
-from .models import WritingTask, WritingSubmission
+from .models import WritingTask, WritingSubmission, WritingEvaluation
 
 class WritingTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = WritingTask
-        fields = '__all__'
+        fields = ['id', 'task_type', 'title', 'question', 'image']
+
+class WritingEvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WritingEvaluation
+        fields = ['score', 'coherence', 'grammar', 'vocabulary', 'response', 'feedback']
 
 class WritingSubmissionSerializer(serializers.ModelSerializer):
     task = WritingTaskSerializer(read_only=True)
-    task_id = serializers.IntegerField(write_only=True)
-    evaluation = serializers.SerializerMethodField()
+    evaluation = WritingEvaluationSerializer(read_only=True)
 
     class Meta:
         model = WritingSubmission
-        fields = ['id', 'task', 'task_id', 'answer', 'evaluation']
-
-    def get_evaluation(self, obj):
-        try:
-            return {
-                "score": obj.eval.score,
-                "coherence": obj.eval.coherence,
-                "grammar": obj.eval.grammar,
-                "vocabulary": obj.eval.vocabulary,
-                "response": obj.eval.response,
-                "feedback": obj.eval.feedback
-            }
-        except:
-            return None
-
-    # create() ni oddiy qilamiz - faqat saqlaymiz
-    def create(self, validated_data):
-        return WritingSubmission.objects.create(**validated_data)
+        fields = ['id', 'task', 'answer', 'start_time', 'end_time', 'evaluation']
 
     
