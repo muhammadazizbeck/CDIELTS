@@ -1,8 +1,5 @@
 from django.contrib import admin
-from writing.models import WritingTask,WritingEvaluation,WritingSubmission
+from writing.models import WritingTask1,WritingTask2
 
-# Register your models here.
-
-admin.site.register(WritingTask)
-admin.site.register(WritingEvaluation)
-admin.site.register(WritingSubmission)
+admin.site.register(WritingTask1)
+admin.site.register(WritingTask2)

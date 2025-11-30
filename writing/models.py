@@ -7,49 +7,28 @@ User = get_user_model()
 
 # Create your models here.
 
-class WritingTask(models.Model):
-    TASK_CHOICES = (
-        ("task1","Task 1"),
-        ("task2","Task 2")
-    )
-    task_type = models.CharField(max_length=10,choices=TASK_CHOICES)
-    image = models.ImageField(upload_to='writing_images',null=True,blank=True)
-    title = models.CharField(max_length=400)
-    question = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+class WritingTask1(models.Model):
+    image = models.ImageField(upload_to='writings/images')
+    title = models.CharField(max_length=250)
+    question = models.CharField(max_length=300)
+    recommended_minutes = models.PositiveSmallIntegerField(default=20, help_text="Tavsiya etilgan vaqt (daqiqa)")
 
     def __str__(self):
-        return f"Writing-{self.title[:30]}"
+        return self.title[:120]
     
-def one_hour_later():
-    return timezone.now() + timedelta(hours=1)
+class WritingTask2(models.Model):
+    title = models.CharField(max_length=250)
+    question = models.CharField(max_length=300)
+    recommended_minutes = models.PositiveSmallIntegerField(default=40, help_text="Tavsiya etilgan vaqt (daqiqa)")
 
-class WritingSubmission(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='submissions')
-    task = models.ForeignKey(WritingTask,on_delete=models.CASCADE,related_name='submissions')
-    answer = models.TextField()
-    start_time = models.DateTimeField(auto_now_add=True)
-    end_time = models.DateTimeField(default=one_hour_later)
-    submitted_at = models.DateTimeField(blank=True,null=True)
+    def __str__(self):
+        return self.title[:120]
 
-    def is_time_over(self):
-        return timezone.now()>self.end_time
+
     
-    def __str__(self):
-        return f"{self.user.username}-Writing Submission"
 
-class WritingEvaluation(models.Model):
-    submission = models.OneToOneField(WritingSubmission,on_delete=models.CASCADE,related_name='evaluation')
+    
 
-    score = models.FloatField(null=True,blank=True)
-    coherence = models.FloatField(null=True,blank=True)
-    grammar = models.FloatField(null=True,blank=True)
-    vocabulary = models.FloatField(null=True,blank=True)
-    response = models.FloatField(null=True,blank=True)
-    feedback = models.TextField(null=True,blank=True)
-
-    def __str__(self):
-        return f"Evaluation for {self.submission.task.task_type}"
 
     
 

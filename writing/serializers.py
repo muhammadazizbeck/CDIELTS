@@ -1,23 +1,19 @@
 # backend/writing/serializers.py
 from rest_framework import serializers
-from .models import WritingTask, WritingSubmission, WritingEvaluation
+from .models import WritingTask1,WritingTask2
 
-class WritingTaskSerializer(serializers.ModelSerializer):
+class WritingTask1Serializer(serializers.ModelSerializer):
     class Meta:
-        model = WritingTask
-        fields = ['id', 'task_type', 'title', 'question', 'image']
+        model = WritingTask1
+        fields = ["image","title","question","recommended_minutes"]
 
-class WritingEvaluationSerializer(serializers.ModelSerializer):
+
+class WritingTask2Serializer(serializers.ModelSerializer):
     class Meta:
-        model = WritingEvaluation
-        fields = ['score', 'coherence', 'grammar', 'vocabulary', 'response', 'feedback']
+        model = WritingTask2
+        fields = ['title','question','recommended_minutes']
+    
 
-class WritingSubmissionSerializer(serializers.ModelSerializer):
-    task = WritingTaskSerializer(read_only=True)
-    evaluation = WritingEvaluationSerializer(read_only=True)
 
-    class Meta:
-        model = WritingSubmission
-        fields = ['id', 'task', 'answer', 'start_time', 'end_time', 'evaluation']
 
     
