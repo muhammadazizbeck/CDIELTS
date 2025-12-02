@@ -13,7 +13,12 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG",default=False,cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+]
+
 
 # Application definition
 
@@ -29,11 +34,14 @@ INSTALLED_APPS = [
     'users',
     'writing',
     "article",
+    "dictionary",
 
     #external
     'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
+    'whitenoise.runserver_nostatic',
+
 
 ]
 
@@ -57,6 +65,7 @@ GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,6 +98,17 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 GEMINI_API_KEY = config("GEMINI_API_KEY")
 
+# settings.py
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+        "TIMEOUT": 60 * 60 * 24 * 30,  # 30 kun kesh
+        "OPTIONS": {
+            "MAX_ENTRIES": 10000
+        }
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -96,7 +116,7 @@ GEMINI_API_KEY = config("GEMINI_API_KEY")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config("DB_NAME"),
+        'NAME': config("DB_NAME",),
         "USER":config("DB_USER"),
         "PASSWORD":config("DB_PASSWORD"),
         "PORT":config("DB_PORT"),
@@ -139,7 +159,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
