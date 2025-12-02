@@ -17,6 +17,8 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "0.0.0.0",
+    "edueveryone.uz",
+    "188.245.68.221",
 ]
 
 
