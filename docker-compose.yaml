@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   web:
     build: .
@@ -9,12 +11,12 @@ services:
     depends_on:
       - db
     environment:
-      # You can pass Django env variables here if needed
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
+      DB_HOST: db
+      DB_PORT: 5432
+    restart: always
 
   db:
     image: postgres:14
@@ -22,11 +24,10 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    
+    restart: always
+
   nginx:
     image: nginx:latest
     ports:
@@ -37,9 +38,11 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - web
+    restart: always
 
 volumes:
   pgdata:
+
 
 
 
