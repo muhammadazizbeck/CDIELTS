@@ -20,11 +20,6 @@ schema_view = get_schema_view(
 )
 
 
-
-
-
-
-
 urlpatterns = [
    path('foradmins-only/', admin.site.urls),
    path("api/users/",include("users.urls")),

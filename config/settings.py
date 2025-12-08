@@ -22,16 +22,24 @@ ALLOWED_HOSTS = [
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = False  # to‘g‘ri, chunki NGINX allaqachon redirect qiladi
 
+# Agar yo‘q bo‘lsa, albatta qo‘shing:
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+
+# CSRF va Session cookie xavfsizligi
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'Lax'      # yoki 'Strict'
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# CSRF_TRUSTED_ORIGINS – to‘g‘ri yozilgan, lekin www ni ham qo‘shing
 CSRF_TRUSTED_ORIGINS = [
     "https://edueveryone.uz",
     "https://www.edueveryone.uz",
-    "https://91.98.149.199",
+    "https://91.98.149.199"
 ]
-
-# Agar yoʻq boʻlsa
-USE_TZ = True
 
 
 # Application definition
