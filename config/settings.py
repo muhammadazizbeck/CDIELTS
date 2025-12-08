@@ -18,8 +18,19 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "0.0.0.0",
     "edueveryone.uz",
-    "188.245.68.221",
+    "91.98.149.199",
 ]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://edueveryone.uz",
+    "https://www.edueveryone.uz",
+]
+
+# Agar yoʻq boʻlsa
+USE_TZ = True
 
 
 # Application definition
