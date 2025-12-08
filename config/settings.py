@@ -27,6 +27,7 @@ SECURE_SSL_REDIRECT = False
 CSRF_TRUSTED_ORIGINS = [
     "https://edueveryone.uz",
     "https://www.edueveryone.uz",
+    "https://91.98.149.199",
 ]
 
 # Agar yoʻq boʻlsa
