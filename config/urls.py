@@ -5,6 +5,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf import settings
 from django.conf.urls.static import static
+from . import views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -24,6 +25,7 @@ urlpatterns = [
    path('foradmins-only/', admin.site.urls),
    path("api/users/",include("users.urls")),
    path('api/writing/',include("writing.urls")),
+   path("test_csrf/",views.test_csrf),
    path("api/article/",include('article.urls')),
    path("api/dictionary/",include('dictionary.urls')),
    path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
